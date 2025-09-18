@@ -23,12 +23,16 @@ import { HealthTips } from "@/components/health/health-tips"
 import { PredictionEngine } from "@/components/advanced/prediction-engine"
 import { RealTimeAlerts } from "@/components/advanced/real-time-alerts"
 import { LocationComparison } from "@/components/advanced/location-comparison"
+import { EnhancedAreaSelector } from "@/components/advanced/enhanced-area-selector"
+import { MultiAreaComparison } from "@/components/advanced/multi-area-comparison"
+import { AreaInsights } from "@/components/advanced/area-insights"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function AirQualityDashboard() {
   const [selectedLocation, setSelectedLocation] = useState<number>(1)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false)
 
   const { data: locations, error: locationsError } = useSWR("/api/air-quality", fetcher)
   const {
@@ -94,7 +98,7 @@ export default function AirQualityDashboard() {
               <h1 className="text-4xl md:text-6xl font-bold text-balance">Air Quality Monitor</h1>
             </div>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Real-time air quality monitoring with advanced analytics and health recommendations
+              Real-time air quality monitoring with advanced analytics and health recommendations for 30+ Bengaluru areas
             </p>
           </motion.div>
         </div>
@@ -103,30 +107,50 @@ export default function AirQualityDashboard() {
       {/* Main Dashboard */}
       <section className="container mx-auto px-4 py-8">
         <div className="space-y-8">
-          {/* Location Selector and Refresh */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex items-center gap-3">
-              <MapPin className="h-5 w-5 text-primary" />
-              <Select
-                value={selectedLocation?.toString()}
-                onValueChange={(value) => setSelectedLocation(Number.parseInt(value))}
-              >
-                <SelectTrigger className="w-64 glass">
-                  <SelectValue placeholder="Select location" />
-                </SelectTrigger>
-                <SelectContent>
-                  {locations?.map((location: any) => (
-                    <SelectItem key={location.id} value={location.id.toString()}>
-                      {location.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {/* Enhanced Area Selection */}
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
+                  className="glass"
+                >
+                  {showAdvancedFeatures ? 'Simple View' : 'Advanced Area Selection'}
+                </Button>
+              </div>
+              <Button onClick={handleRefresh} disabled={isRefreshing} className="glass">
+                <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+                Refresh Data
+              </Button>
             </div>
-            <Button onClick={handleRefresh} disabled={isRefreshing} className="glass">
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
-              Refresh Data
-            </Button>
+            
+            {showAdvancedFeatures ? (
+              <EnhancedAreaSelector
+                locations={locations || []}
+                selectedLocation={selectedLocation}
+                onLocationSelect={setSelectedLocation}
+              />
+            ) : (
+              <div className="flex items-center gap-3">
+                <MapPin className="h-5 w-5 text-primary" />
+                <Select
+                  value={selectedLocation?.toString()}
+                  onValueChange={(value) => setSelectedLocation(Number.parseInt(value))}
+                >
+                  <SelectTrigger className="w-64 glass">
+                    <SelectValue placeholder="Select location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {locations?.map((location: any) => (
+                      <SelectItem key={location.id} value={location.id.toString()}>
+                        {location.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           {/* Current AQI Status */}
@@ -162,7 +186,19 @@ export default function AirQualityDashboard() {
             <CardSkeleton />
           )}
 
-          {/* Advanced Features */}
+          {/* New Advanced Features */}
+          {latestData && locations && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <MultiAreaComparison locations={locations} className="lg:col-span-2" />
+              <AreaInsights 
+                location={currentLocation} 
+                allLocations={locations}
+                className="lg:col-span-2"
+              />
+            </div>
+          )}
+
+          {/* Original Advanced Features */}
           {latestData && airQualityData && (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               <PredictionEngine historicalData={airQualityData} className="xl:col-span-2" />

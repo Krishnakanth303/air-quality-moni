@@ -1,19 +1,34 @@
-# 🌬️ Air Quality Monitor
+# 🌬️ Air Quality Monitor - Bengaluru Edition
 
-A premium full-stack air quality monitoring platform with real-time data visualization, health recommendations, and pollution prediction capabilities.
+A premium full-stack air quality monitoring platform with real-time data visualization, health recommendations, and pollution prediction capabilities for Bengaluru city.
 
 ![Air Quality Monitor](https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=1200&h=400&fit=crop&crop=center)
 
 ## ✨ Features
 
-- **Real-time Air Quality Data** - Live AQI monitoring with OpenWeather API integration
+- **Real-time Air Quality Data** - Live AQI monitoring across 10 major areas in Bengaluru
 - **Premium Design** - Glass morphism effects, smooth animations, and dark theme
 - **Advanced Analytics** - Interactive charts and data visualization with Recharts
 - **Health Recommendations** - Personalized health advice based on current air quality
 - **Pollution Prediction** - AI-powered forecasting for future air quality trends
-- **Multi-location Support** - Monitor air quality across different cities
+- **Multi-location Support** - Monitor air quality across different areas of Bengaluru
 - **Responsive Design** - Optimized for desktop, tablet, and mobile devices
 - **Real-time Alerts** - Get notified when air quality changes significantly
+
+## 🏙️ Bengaluru Locations Covered
+
+The application monitors air quality across 10 major areas in Bengaluru:
+
+1. **Koramangala** - Tech hub and commercial area
+2. **Whitefield** - IT corridor with major tech companies
+3. **Electronic City** - Major IT and electronics manufacturing hub
+4. **Indiranagar** - Popular residential and commercial area
+5. **Jayanagar** - Traditional residential locality
+6. **HSR Layout** - Modern residential area
+7. **Marathahalli** - IT and residential area
+8. **BTM Layout** - Busy residential and commercial area
+9. **Banashankari** - Established residential locality
+10. **Rajajinagar** - Central Bengaluru residential area
 
 ## 🚀 Tech Stack
 
@@ -29,7 +44,7 @@ A premium full-stack air quality monitoring platform with real-time data visuali
 
 ### Backend
 - **Node.js** - JavaScript runtime
-- **SQLite** - Lightweight database
+- **SQLite** - Lightweight database with pre-populated Bengaluru locations
 - **OpenWeather API** - Air quality data source
 
 ## 📋 Prerequisites
@@ -49,32 +64,32 @@ If using v0.app:
 - Extract the ZIP file to your desired location
 
 If using GitHub:
-\`\`\`bash
+```bash
 git clone <your-repo-url>
 cd air-quality-monitor
-\`\`\`
+```
 
 ### 2. Install Dependencies
 
-\`\`\`bash
+```bash
 npm install
 # or
 yarn install
-\`\`\`
+```
 
 ### 3. Environment Variables Setup
 
 Create a `.env.local` file in the root directory:
 
-\`\`\`bash
+```bash
 cp .env.example .env.local
-\`\`\`
+```
 
 Add your OpenWeather API key to `.env.local`:
 
-\`\`\`env
+```env
 OPENWEATHER_API_KEY=your_api_key_here
-\`\`\`
+```
 
 **To get your OpenWeather API key:**
 1. Visit [OpenWeather API](https://openweathermap.org/api)
@@ -84,28 +99,29 @@ OPENWEATHER_API_KEY=your_api_key_here
 
 ### 4. Database Setup
 
-The application uses SQLite for data storage. Run the setup scripts:
+The application uses SQLite with pre-configured Bengaluru locations. Set up the database:
 
-\`\`\`bash
-# Create database tables
+```bash
+# Create database tables and populate with Bengaluru locations
 npm run db:setup
 
-# Seed with sample data (optional)
-npm run db:seed
-\`\`\`
+# Generate sample historical data for all Bengaluru locations
+node scripts/02-seed-sample-data.js
+```
 
-**Manual setup (if scripts don't work):**
-1. The database file will be created automatically at `./air_quality.db`
-2. Tables will be created on first API call
-3. Sample data will be populated automatically
+**What this creates:**
+- Database with 10 Bengaluru locations (Koramangala, Whitefield, Electronic City, etc.)
+- Health recommendation categories based on AQI levels
+- 30 days of sample historical data for each location
+- Proper database indexes for optimal performance
 
 ### 5. Start the Development Server
 
-\`\`\`bash
+```bash
 npm run dev
 # or
 yarn dev
-\`\`\`
+```
 
 The application will be available at [http://localhost:3000](http://localhost:3000)
 
@@ -113,9 +129,9 @@ The application will be available at [http://localhost:3000](http://localhost:30
 
 ### First Time Setup
 
-1. **Open the application** in your browser
-2. **Select a location** from the dropdown menu
-3. **Click "Refresh Data"** to fetch initial air quality data
+1. **Open the application** in your browser at `http://localhost:3000`
+2. **Select a Bengaluru location** from the dropdown menu (default locations include Koramangala, Whitefield, Electronic City, etc.)
+3. **Click "Refresh Data"** to fetch real-time air quality data from OpenWeather API
 4. **Explore the dashboard** features:
    - Current AQI status with color-coded indicators
    - Real-time pollutant measurements (PM2.5, PM10, O₃, NO₂, SO₂, CO)
@@ -125,6 +141,12 @@ The application will be available at [http://localhost:3000](http://localhost:30
 
 ### Key Features Explained
 
+#### 🏙️ Bengaluru-Specific Features
+- **Local Area Monitoring** - Track air quality across major Bengaluru localities
+- **Traffic Pattern Analysis** - Understand pollution levels in IT corridors vs residential areas
+- **Seasonal Trends** - Monitor air quality changes during monsoon and dry seasons
+- **Location Comparison** - Compare air quality between different areas of the city
+
 #### 🎨 Premium Design Elements
 - **Glass morphism effects** for modern UI aesthetics
 - **Smooth animations** powered by Framer Motion
@@ -133,55 +155,54 @@ The application will be available at [http://localhost:3000](http://localhost:30
 
 #### 📊 Data Visualization
 - **AQI Gauge** - Visual representation of current air quality
-- **Trend Charts** - Historical data over time
+- **Trend Charts** - Historical data over time for selected Bengaluru area
 - **Pollutant Breakdown** - Detailed analysis of individual pollutants
 - **Weekly Comparison** - Compare air quality across different time periods
 
 #### 🏥 Health Features
 - **Real-time Health Recommendations** based on current AQI levels
-- **Activity Suggestions** for outdoor activities
-- **Health Tips** for sensitive individuals
+- **Activity Suggestions** for outdoor activities in Bengaluru weather
+- **Health Tips** for sensitive individuals during high pollution days
 - **Alert System** for dangerous air quality levels
 
 #### 🔮 Advanced Features
 - **Pollution Prediction Engine** - AI-powered forecasting
-- **Location Comparison** - Compare air quality between cities
+- **Location Comparison** - Compare air quality between Bengaluru areas
 - **Real-time Alerts** - Get notified of significant changes
-- **Historical Data Analysis** - Track long-term trends
+- **Historical Data Analysis** - Track long-term trends across the city
 
 ## 🔧 Configuration
 
-### Adding New Locations
+### Adding New Bengaluru Locations
 
-To add new monitoring locations, you can:
+To add more areas within Bengaluru:
 
-1. **Via API** - POST to `/api/air-quality` with location data
-2. **Via Database** - Insert directly into the `locations` table
-3. **Via Admin Panel** - Use the built-in location management (if enabled)
+1. **Via Database** - Insert directly into the `locations` table:
+```sql
+INSERT INTO locations (name, latitude, longitude) VALUES 
+('Hebbal', 13.0358, 77.5970),
+('Yelahanka', 13.1007, 77.5963);
+```
 
-### Customizing Themes
+2. **Via API** - POST to `/api/air-quality` with location data
+3. **Coordinates for common Bengaluru areas:**
+   - MG Road: 12.9716, 77.5946
+   - Cunningham Road: 12.9716, 77.5946
+   - Malleshwaram: 13.0067, 77.5667
+   - Basavanagudi: 12.9395, 77.5684
 
-The application uses CSS custom properties for theming. Edit `app/globals.css` to customize:
+### Customizing for Other Indian Cities
 
-\`\`\`css
-:root {
-  --primary: oklch(0.7 0.15 280); /* Primary brand color */
-  --background: oklch(0.08 0 0);  /* Background color */
-  /* ... other theme variables */
-}
-\`\`\`
+To adapt this for other Indian cities:
 
-### API Configuration
-
-The OpenWeather API integration can be customized in `lib/openweather.js`:
-
-- **Update frequency** - Modify the data fetching intervals
-- **Additional parameters** - Add more weather data points
-- **Error handling** - Customize error responses
+1. **Update locations** in `scripts/01-create-tables.sql`
+2. **Modify the README** title and location descriptions
+3. **Update sample data generation** in `scripts/02-seed-sample-data.js`
+4. **Adjust health recommendations** if needed for local conditions
 
 ## 📁 Project Structure
 
-\`\`\`
+```
 air-quality-monitor/
 ├── app/                          # Next.js App Router
 │   ├── api/                      # API routes
@@ -201,13 +222,12 @@ air-quality-monitor/
 │   ├── openweather.js            # OpenWeather API integration
 │   └── utils.ts                  # General utilities
 ├── scripts/                      # Database setup scripts
-│   ├── 01-create-tables.sql      # Database schema
-│   └── 02-seed-sample-data.js    # Sample data insertion
-├── .env.example                  # Environment variables template
+│   ├── 01-create-tables.sql      # Database schema with Bengaluru locations
+│   └── 02-seed-sample-data.js    # Sample data for all locations
 ├── .env.local                    # Your environment variables (create this)
 ├── package.json                  # Dependencies and scripts
 └── README.md                     # This file
-\`\`\`
+```
 
 ## 🚀 Deployment
 
@@ -220,23 +240,14 @@ air-quality-monitor/
    - Add your `OPENWEATHER_API_KEY` in Environment Variables
 3. **Deploy** - Vercel will automatically build and deploy your app
 
-### Deploy to Other Platforms
-
-The application can be deployed to any platform that supports Node.js:
-
-- **Netlify** - Add build command: `npm run build`
-- **Railway** - Automatic deployment from GitHub
-- **DigitalOcean App Platform** - Container-based deployment
-- **AWS/Google Cloud** - Using their respective app services
-
 ### Environment Variables for Production
 
 Make sure to set these environment variables in your deployment platform:
 
-\`\`\`env
+```env
 OPENWEATHER_API_KEY=your_production_api_key
 NODE_ENV=production
-\`\`\`
+```
 
 ## 🔍 Troubleshooting
 
@@ -246,40 +257,54 @@ NODE_ENV=production
 - **Check API Key**: Ensure your OpenWeather API key is valid and active
 - **Check Network**: Verify internet connection and API accessibility
 - **Check Limits**: Free OpenWeather accounts have rate limits (1000 calls/day)
+- **Bengaluru Coordinates**: Verify the latitude/longitude values are correct
 
 #### Database Connection Issues
 - **File Permissions**: Ensure the app can write to the database file location
 - **SQLite Installation**: Verify SQLite is properly installed
 - **Path Issues**: Check that the database path is correct in `lib/database.js`
+- **Bengaluru Data**: Run `npm run db:setup` to ensure locations are populated
 
-#### Styling Issues
-- **Clear Cache**: Clear browser cache and restart the development server
-- **Check Tailwind**: Ensure Tailwind CSS is properly configured
-- **Verify Imports**: Check that all component imports are correct
-
-#### Performance Issues
-- **API Rate Limiting**: Implement caching to reduce API calls
-- **Database Optimization**: Add indexes for frequently queried columns
-- **Image Optimization**: Use Next.js Image component for better performance
+#### No Data for Bengaluru Locations
+- **Run Database Setup**: Execute `npm run db:setup` and `node scripts/02-seed-sample-data.js`
+- **Check API Response**: Verify OpenWeather API returns data for Bengaluru coordinates
+- **Location IDs**: Ensure location IDs in the database match the frontend queries
 
 ### Getting Help
 
 If you encounter issues:
 
 1. **Check the Console** - Look for error messages in browser developer tools
-2. **Verify Environment** - Ensure all environment variables are set correctly
+2. **Verify Environment** - Ensure `OPENWEATHER_API_KEY` is set correctly
 3. **Check API Status** - Verify OpenWeather API is operational
-4. **Review Logs** - Check server logs for detailed error information
+4. **Database Check** - Ensure Bengaluru locations are properly inserted
+5. **Review Logs** - Check server logs for detailed error information
 
 ## 📊 API Endpoints
 
 ### Air Quality Data
-- `GET /api/air-quality` - Get all locations with latest data
-- `GET /api/air-quality?locationId=1&limit=24` - Get historical data for location
-- `POST /api/air-quality` - Refresh data for specific location
+- `GET /api/air-quality` - Get all Bengaluru locations with latest data
+- `GET /api/air-quality?locationId=1&limit=24` - Get historical data for specific location
+- `POST /api/air-quality` - Refresh data for specific Bengaluru location
 
 ### Health Recommendations
 - `GET /api/health-recommendations?aqi=50` - Get health advice for AQI level
+
+## 🌟 Bengaluru-Specific Features
+
+### Traffic and Pollution Correlation
+- Monitor how traffic patterns in areas like Whitefield and Electronic City affect air quality
+- Compare pollution levels during peak hours vs off-peak hours
+
+### Seasonal Monitoring
+- Track air quality changes during Bengaluru's monsoon season (June-September)
+- Monitor winter pollution levels (December-February)
+- Observe the impact of festivals like Diwali on air quality
+
+### Area-Specific Insights
+- **IT Corridors** (Whitefield, Electronic City): Higher weekday pollution
+- **Residential Areas** (Jayanagar, Indiranagar): More consistent levels
+- **Commercial Areas** (Koramangala, BTM Layout): Variable based on activity
 
 ## 🤝 Contributing
 
@@ -296,8 +321,8 @@ We welcome contributions! Here's how you can help:
 
 - **Follow TypeScript** best practices
 - **Use Tailwind CSS** for styling
+- **Test with Bengaluru coordinates** to ensure accuracy
 - **Write descriptive commit messages**
-- **Test your changes** thoroughly
 - **Update documentation** as needed
 
 ## 📄 License
@@ -311,10 +336,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **shadcn/ui** for the beautiful component library
 - **Tailwind CSS** for the utility-first CSS framework
 - **Recharts** for the data visualization components
+- **Bengaluru Citizens** for inspiring local environmental monitoring
 
 ---
 
-**Built with ❤️ using v0.app**
+**Built with ❤️ for Bengaluru using v0.app**
+
+Monitor the air quality in India's Silicon Valley and make informed decisions about your daily activities based on real-time environmental data.
 
 For more information or support, please visit [v0.app](https://v0.app)
-# air-quality-mon

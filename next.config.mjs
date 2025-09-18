@@ -13,6 +13,8 @@ const nextConfig = {
   async rewrites() {
     return []
   },
+  // Configure allowed dev origins for Replit
+  allowedDevOrigins: ['*.replit.dev', '*.picard.replit.dev'],
   // Configure for development in Replit
   ...(process.env.NODE_ENV === 'development' && {
     async headers() {

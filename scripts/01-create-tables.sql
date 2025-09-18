@@ -40,10 +40,15 @@ INSERT OR REPLACE INTO health_recommendations (aqi_min, aqi_max, category, color
 (201, 300, 'Very Unhealthy', '#8F3F97', 'Health alert for everyone', 'Stay indoors. Avoid all outdoor activities. Use masks if you must go outside'),
 (301, 500, 'Hazardous', '#7E0023', 'Emergency conditions', 'Stay indoors with air purifiers. Seek medical attention if experiencing symptoms');
 
--- Insert sample locations
+-- Insert Bengaluru locations
 INSERT OR REPLACE INTO locations (name, latitude, longitude) VALUES
-('New York City', 40.7128, -74.0060),
-('Los Angeles', 34.0522, -118.2437),
-('Chicago', 41.8781, -87.6298),
-('Houston', 29.7604, -95.3698),
-('Phoenix', 33.4484, -112.0740);
+('Koramangala', 12.9279, 77.6271),
+('Whitefield', 12.9698, 77.7500),
+('Electronic City', 12.8456, 77.6603),
+('Indiranagar', 12.9784, 77.6408),
+('Jayanagar', 12.9249, 77.5832),
+('HSR Layout', 12.9081, 77.6476),
+('Marathahalli', 12.9591, 77.6974),
+('BTM Layout', 12.9165, 77.6101),
+('Banashankari', 12.9081, 77.5674),
+('Rajajinagar', 12.9915, 77.5520);

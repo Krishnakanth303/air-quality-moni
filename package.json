@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "dev": "next dev",
-    "lint": "next lint",
-    "start": "next start",
-    "db:setup": "sqlite3 air-quality.db < scripts/create-tables.sql"
-  },
+  "dev": "next dev -p 3001",
+  "build": "next build",
+  "start": "next start -p 3001",
+  "lint": "next lint",
+  "db:setup": "sqlite3 air-quality.db < scripts/create-tables.sql"
+},
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^3.10.0",

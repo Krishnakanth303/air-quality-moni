@@ -10,7 +10,8 @@ import { PremiumCard } from "@/components/ui/premium-card"
 import { MetricCard } from "@/components/ui/metric-card"
 import { AQIBadge } from "@/components/ui/aqi-badge"
 import { Button } from "@/components/ui/button"
-import { CardSkeleton } from "@/components/ui/loading-skeleton"
+import { CardSkeleton, LoadingSkeleton } from "@/components/ui/loading-skeleton"
+import { LoadingSpinner, PageLoader } from "@/components/ui/loading-spinner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 import { AQITrendChart } from "@/components/charts/aqi-trend-chart"
@@ -27,6 +28,9 @@ import { LocationComparison } from "@/components/advanced/location-comparison"
 import { EnhancedAreaSelector } from "@/components/advanced/enhanced-area-selector"
 import { MultiAreaComparison } from "@/components/advanced/multi-area-comparison"
 import { AreaInsights } from "@/components/advanced/area-insights"
+import { AirQualityHeatmap } from "@/components/advanced/air-quality-heatmap"
+import { WeatherIntegration } from "@/components/advanced/weather-integration"
+import { AirQualityTimeline } from "@/components/advanced/air-quality-timeline"
 
 const fetcher = (url: string) => fetch(url).then((res) => {
   if (!res.ok) {
@@ -44,7 +48,8 @@ export default function AirQualityDashboard() {
   const searchParams = useSearchParams()
   const [selectedLocation, setSelectedLocation] = useState<number>(1)
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false)
+  const [activeTab, setActiveTab] = useState<"overview" | "advanced" | "analytics">("overview")
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
 
   const { data: locations, error: locationsError } = useSWR("/api/air-quality", fetcher)
   const {
@@ -60,6 +65,14 @@ export default function AirQualityDashboard() {
   const currentLocation = locations?.find((loc: any) => loc.id === selectedLocation)
   const latestData = currentLocation?.latest
 
+  // Handle initial loading
+  React.useEffect(() => {
+    if (locations && airQualityData) {
+      const timer = setTimeout(() => setIsInitialLoading(false), 500)
+      return () => clearTimeout(timer)
+    }
+  }, [locations, airQualityData])
+
   const handleRefresh = async () => {
     setIsRefreshing(true)
     try {
@@ -74,6 +87,26 @@ export default function AirQualityDashboard() {
     } finally {
       setIsRefreshing(false)
     }
+  }
+
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case "history":
+        setActiveTab("analytics")
+        break
+      case "alerts":
+        // Scroll to alerts section
+        document.getElementById("alerts-section")?.scrollIntoView({ behavior: "smooth" })
+        break
+      case "recommendations":
+        // Scroll to health recommendations
+        document.getElementById("health-section")?.scrollIntoView({ behavior: "smooth" })
+        break
+    }
+  }
+
+  if (isInitialLoading) {
+    return <PageLoader />
   }
 
   if (locationsError || dataError) {
@@ -123,21 +156,43 @@ export default function AirQualityDashboard() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex items-center gap-3">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
-                  className="glass"
-                >
-                  {showAdvancedFeatures ? 'Simple View' : 'Advanced Area Selection'}
+                <div className="flex bg-muted rounded-lg p-1">
+                  <Button
+                    variant={activeTab === "overview" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    Overview
+                  </Button>
+                  <Button
+                    variant={activeTab === "advanced" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setActiveTab("advanced")}
+                  >
+                    Advanced
+                  </Button>
+                  <Button
+                    variant={activeTab === "analytics" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setActiveTab("analytics")}
+                  >
+                    Analytics
+                  </Button>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleRefresh} disabled={isRefreshing} variant="outline" className="glass">
+                  {isRefreshing ? (
+                    <LoadingSpinner size="sm" className="mr-2" />
+                  ) : (
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                  )}
+                  Refresh Data
                 </Button>
               </div>
-              <Button onClick={handleRefresh} disabled={isRefreshing} className="glass">
-                <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
-                Refresh Data
-              </Button>
             </div>
             
-            {showAdvancedFeatures ? (
+            {activeTab === "advanced" ? (
               <EnhancedAreaSelector
                 locations={locations || []}
                 selectedLocation={selectedLocation}
@@ -198,64 +253,95 @@ export default function AirQualityDashboard() {
             <CardSkeleton />
           )}
 
-          {/* New Advanced Features */}
-          {latestData && locations && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <MultiAreaComparison locations={locations} className="lg:col-span-2" />
-              <AreaInsights 
-                location={currentLocation} 
-                allLocations={locations}
-                className="lg:col-span-2"
-              />
-            </div>
+          {/* Tab Content */}
+          {activeTab === "overview" && latestData && locations && (
+            <>
+              {/* Health Recommendations */}
+              <div id="health-section" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <HealthRecommendations
+                  aqi={latestData.aqi}
+                  pollutants={{
+                    pm25: latestData.pm25 || 0,
+                    pm10: latestData.pm10 || 0,
+                    o3: latestData.o3 || 0,
+                    no2: latestData.no2 || 0,
+                    so2: latestData.so2 || 0,
+                    co: latestData.co || 0,
+                  }}
+                  className="lg:col-span-2"
+                />
+                <HealthTips aqi={latestData.aqi} />
+              </div>
+
+              {/* Data Visualization Charts */}
+              {airQualityData && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <AQIGauge aqi={latestData.aqi} className="xl:col-span-1" />
+                  <PollutantBreakdown
+                    data={{
+                      pm25: latestData.pm25 || 0,
+                      pm10: latestData.pm10 || 0,
+                      o3: latestData.o3 || 0,
+                      no2: latestData.no2 || 0,
+                      so2: latestData.so2 || 0,
+                      co: latestData.co || 0,
+                    }}
+                    className="xl:col-span-2"
+                  />
+                  <AQITrendChart data={airQualityData} className="lg:col-span-2" />
+                  {weeklyData && <WeeklyComparison data={weeklyData} className="lg:col-span-1" />}
+                </div>
+              )}
+            </>
           )}
 
-          {/* Original Advanced Features */}
-          {latestData && airQualityData && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              <PredictionEngine historicalData={airQualityData} className="xl:col-span-2" />
-              <RealTimeAlerts currentAQI={latestData.aqi} />
-              <LocationComparison currentLocationId={selectedLocation} className="lg:col-span-2 xl:col-span-1" />
-            </div>
+          {activeTab === "advanced" && latestData && locations && (
+            <>
+              {/* Advanced Features */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <MultiAreaComparison locations={locations} className="lg:col-span-2" />
+                <AreaInsights 
+                  location={currentLocation} 
+                  allLocations={locations}
+                  className="lg:col-span-2"
+                />
+              </div>
+
+              {/* Heatmap and Weather Integration */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <AirQualityHeatmap locations={locations} />
+                <WeatherIntegration 
+                  locationName={currentLocation?.name || ""}
+                  aqi={latestData.aqi}
+                />
+              </div>
+
+              {/* Prediction and Alerts */}
+              {airQualityData && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <PredictionEngine historicalData={airQualityData} className="xl:col-span-2" />
+                  <div id="alerts-section">
+                    <RealTimeAlerts currentAQI={latestData.aqi} />
+                  </div>
+                  <LocationComparison currentLocationId={selectedLocation} className="lg:col-span-2 xl:col-span-1" />
+                </div>
+              )}
+            </>
           )}
 
-          {/* Health Recommendations */}
-          {latestData && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <HealthRecommendations
-                aqi={latestData.aqi}
-                pollutants={{
-                  pm25: latestData.pm25 || 0,
-                  pm10: latestData.pm10 || 0,
-                  o3: latestData.o3 || 0,
-                  no2: latestData.no2 || 0,
-                  so2: latestData.so2 || 0,
-                  co: latestData.co || 0,
-                }}
-                className="lg:col-span-2"
-              />
-              <HealthTips aqi={latestData.aqi} />
-            </div>
-          )}
-
-          {/* Data Visualization Charts */}
-          {airQualityData && latestData && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              <AQIGauge aqi={latestData.aqi} className="xl:col-span-1" />
-              <PollutantBreakdown
-                data={{
-                  pm25: latestData.pm25 || 0,
-                  pm10: latestData.pm10 || 0,
-                  o3: latestData.o3 || 0,
-                  no2: latestData.no2 || 0,
-                  so2: latestData.so2 || 0,
-                  co: latestData.co || 0,
-                }}
-                className="xl:col-span-2"
-              />
-              <AQITrendChart data={airQualityData} className="lg:col-span-2" />
-              {weeklyData && <WeeklyComparison data={weeklyData} className="lg:col-span-1" />}
-            </div>
+          {activeTab === "analytics" && airQualityData && (
+            <>
+              {/* Timeline Analysis */}
+              <AirQualityTimeline data={airQualityData} />
+              
+              {/* Additional Analytics */}
+              {weeklyData && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <WeeklyComparison data={weeklyData} />
+                  <AQITrendChart data={airQualityData} />
+                </div>
+              )}
+            </>
           )}
 
           {/* Pollutant Metrics Grid */}
@@ -326,13 +412,26 @@ export default function AirQualityDashboard() {
                 <p className="text-sm text-muted-foreground">Manage your air quality monitoring</p>
               </div>
               <div className="flex gap-3">
-                <Button variant="outline" className="glass bg-transparent">
+                <Button 
+                  variant="outline" 
+                  className="glass bg-transparent"
+                  onClick={() => handleQuickAction("history")}
+                >
                   View History
                 </Button>
-                <Button variant="outline" className="glass bg-transparent">
+                <Button 
+                  variant="outline" 
+                  className="glass bg-transparent"
+                  onClick={() => handleQuickAction("alerts")}
+                >
                   Set Alerts
                 </Button>
-                <Button className="gradient-primary text-white">Get Recommendations</Button>
+                <Button 
+                  className="gradient-primary text-white"
+                  onClick={() => handleQuickAction("recommendations")}
+                >
+                  Get Recommendations
+                </Button>
               </div>
             </div>
           </PremiumCard>

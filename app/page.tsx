@@ -29,7 +29,7 @@ import { AreaInsights } from "@/components/advanced/area-insights"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-export default function AirQualityDashboard() {
+export default function AirQualityDashboard({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
   const [selectedLocation, setSelectedLocation] = useState<number>(1)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false)

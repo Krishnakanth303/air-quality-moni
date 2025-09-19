@@ -3,6 +3,7 @@
 import { useState } from "react"
 import useSWR from "swr"
 import { motion } from "framer-motion"
+import { useSearchParams } from "next/navigation"
 import { Wind, Thermometer, Eye, Activity, MapPin, RefreshCw, AlertTriangle, Leaf, Cloud } from "lucide-react"
 
 import { PremiumCard } from "@/components/ui/premium-card"
@@ -27,9 +28,20 @@ import { EnhancedAreaSelector } from "@/components/advanced/enhanced-area-select
 import { MultiAreaComparison } from "@/components/advanced/multi-area-comparison"
 import { AreaInsights } from "@/components/advanced/area-insights"
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+const fetcher = (url: string) => fetch(url).then((res) => {
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`)
+  }
+  return res.json().then(data => {
+    if (data.error) {
+      throw new Error(data.error)
+    }
+    return data
+  })
+})
 
-export default function AirQualityDashboard({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
+export default function AirQualityDashboard() {
+  const searchParams = useSearchParams()
   const [selectedLocation, setSelectedLocation] = useState<number>(1)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false)
